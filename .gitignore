@@ -1,0 +1,5 @@
+/config
+.forceignore
+sfdx-project.json
+/work
+/mdapi
