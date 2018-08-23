@@ -40,6 +40,14 @@ public abstract with sharing class application_PaginationController {
     }
 
 
+
+// ====================================
+//  ダイレクトリンク
+// ====================================
+    /** ページネーションの直接リンクの表示個数（現在のページを含む） */
+    private final Integer MAX_DISP_PAGE = 7;
+
+
     /** 任意のページまでページを進める */
     protected void goToPage( Integer wantToGo ) {
         if ( this.ssc == null ) { return; }
@@ -48,5 +56,40 @@ public abstract with sharing class application_PaginationController {
             if ( this.ssc.getHasNext() ) { this.ssc.next(); }
         }
         init();
+    }
+
+
+    /** ページネーションの直接リンクの数値リスト */
+    public List<Integer> getPageNumsForLink() {
+        Integer firstPageNum;
+        Integer lastPageNum;
+
+        if (getTotalPages() <= MAX_DISP_PAGE) {
+            // ① 全ページ表示
+            firstPageNum = 1;
+            lastPageNum = getTotalPages();
+
+        } else if ( (getPageNumber() - (MAX_DISP_PAGE / 2)) < 1) {
+            // ② 1ページ目を含んで表示
+            firstPageNum = 1;
+            lastPageNum = MAX_DISP_PAGE;
+
+
+        } else if ( (getPageNumber() + (MAX_DISP_PAGE / 2) > MAX_DISP_PAGE) ) {
+            // ③ 最後のページを含んで表示
+            firstPageNum = getTotalPages() - MAX_DISP_PAGE + 1;
+            lastPageNum = getTotalPages();
+
+        } else {
+            // ④ 現在のページを中心にして表示
+            firstPageNum = getPageNumber() - (MAX_DISP_PAGE / 2);
+            lastPageNum = getPageNumber() + (MAX_DISP_PAGE / 2);
+        }
+
+        List<Integer> pageNumsForLink = new List<Integer>();
+        for (Integer i = firstPageNum; i <= lastPageNum; i++) {
+            pageNumsForLink.add(i);
+        }
+        return pageNumsForLink;
     }
 }
