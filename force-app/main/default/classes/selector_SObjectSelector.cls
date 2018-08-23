@@ -19,15 +19,49 @@ public abstract with sharing class selector_SObjectSelector {
     public List<SObject> querySObjectByIds(Set<Id> idSet) {
         return (List<SObject>) Database.query(buildQueryByIds());
     }
+
+
     public Database.QueryLocator getQueryLocatorByIds(Set<Id> idSet) {
         return Database.getQueryLocator(buildQueryByIds());
     }
+
+
     /** メンバ変数に設定した条件を使用してクエリを発行する */
     public List<SObject> querySObject() {
         return (List<SObject>) Database.query(buildQuery());
     }
+
+
     public Database.QueryLocator getQueryLocator() {
         return Database.getQueryLocator(buildQuery());
+    }
+
+
+    /** 指定した項目に設定されている値を重複を削除して返却する */
+    public List<Object> queryAllValueOf(Schema.SObjectField field) {
+        String fieldName = field.getDescribe().getName();
+
+        String tmpFilter = (String.isNotBlank(getFilter())) ? getFilter() + ' AND ' : '';
+        tmpFilter += field.getDescribe().getName() + ' != null';
+
+        String query = '' +
+                'SELECT ' +
+                    fieldName + ' ' +
+                'FROM ' +
+                    sObjectType.getDescribe().getName() + ' ' +
+                'WHERE ' +
+                    tmpFilter + ' ' +
+                'GROUP BY ' +
+                    fieldName + ' ' +
+                'ORDER BY ' +
+                    fieldName + ' ASC';
+
+        List<Object> valueList = new List<Object>();
+        for (AggregateResult ar : (List<AggregateResult>) Database.query(query)) {
+            valueList.add(ar.get(fieldName));
+        }
+
+        return valueList;
     }
 
 
@@ -45,6 +79,7 @@ public abstract with sharing class selector_SObjectSelector {
             this.fields.addAll(fieldNames);
         }
     }
+
     public void setSubquery(selector_SObjectSelector subquerySelector) {
         System.assert(this.relationship == null, 'サブクエリは1階層までしか設定できません');
         this.subqueries = new Set<DA_QueryFactory>{subquerySelector.createQueryFactoryOfsubquery()};
@@ -57,24 +92,29 @@ public abstract with sharing class selector_SObjectSelector {
             this.subqueries.add(subquerySelector.createQueryFactoryOfsubquery());
         }
     }
+
     public void setFilter(String pFilter) {
         this.filter = pFilter;
     }
     public String getFilter() {
         return this.filter;
     }
+
     public void setOrder(String pOrder) {
         this.order = pOrder;
     }
     public String getOrder() {
         return this.order;
     }
+
     public void setLimitCount(Integer pLimitCount) {
         this.limitCount = pLimitCount;
     }
+
     public void setOffsetCount(Integer pOffsetCount) {
         this.limitCount = pOffsetCount;
     }
+
     /** filterとorderの一括設定 */
     public void setCondition(DA_QueryConditionContainer queryConditionContainer) {
         setFilter(queryConditionContainer.getQueryFilter());
@@ -90,6 +130,7 @@ public abstract with sharing class selector_SObjectSelector {
     public DA_QueryFactory createQueryFactoryOfsubquery() {
         return createQueryFactory();
     }
+
     public DA_QueryFactory createQueryFactory() {
         DA_QueryFactory queryFactory = DA_QueryFactory.createQueryFactory(SObjectType);
 
@@ -131,6 +172,7 @@ public abstract with sharing class selector_SObjectSelector {
         queryFactory.setFilter('id IN :idSet');
         return queryFactory.toSoql();
     }
+    
     private String buildQuery() {
         return createQueryFactory().toSoql();
     }
