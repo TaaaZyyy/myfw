@@ -39,10 +39,14 @@ public abstract with sharing class selector_SObjectSelector {
 
     /** 指定した項目に設定されている値を重複を削除して返却する */
     public List<Object> queryAllValueOf(Schema.SObjectField field) {
-        String fieldName = field.getDescribe().getName();
-
+        return queryAllValueOf(field.getDescribe().getName());
+    }
+    
+    public List<Object> queryAllValueOf(String fieldName) {
         String tmpFilter = (String.isNotBlank(getFilter())) ? getFilter() + ' AND ' : '';
-        tmpFilter += field.getDescribe().getName() + ' != null';
+        tmpFilter += fieldName + ' != null';
+        
+        String tmpOrder = (String.isNotBlank(getOrder())) ? getOrder() : fieldName + ' ASC';
 
         String query = '' +
                 'SELECT ' +
@@ -54,7 +58,7 @@ public abstract with sharing class selector_SObjectSelector {
                 'GROUP BY ' +
                     fieldName + ' ' +
                 'ORDER BY ' +
-                    fieldName + ' ASC';
+                    tmpOrder;
 
         List<Object> valueList = new List<Object>();
         for (AggregateResult ar : (List<AggregateResult>) Database.query(query)) {
