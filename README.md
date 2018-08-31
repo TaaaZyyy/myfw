@@ -22,3 +22,4 @@ publicをglobalにかえてAPIを公開することもある。
 - [凝集度（Wikipedia）](https://ja.wikipedia.org/wiki/%E5%87%9D%E9%9B%86%E5%BA%A6)
 - [サービスレイヤ（Trailhead）](https://trailhead.salesforce.com/ja/trails/force_com_dev_advanced/modules/apex_patterns_sl/units/apex_patterns_sl_apply_sl_principles)
 - [中規模Web開発のためのMVC分割とレイヤアーキテクチャ(Qiita)](https://qiita.com/yuku_t/items/961194a5443b618a4cac)
+- [アプリケーションのレイヤ化](http://terasolunaorg.github.io/guideline/5.4.1.RELEASE/ja/Overview/ApplicationLayering.html)
