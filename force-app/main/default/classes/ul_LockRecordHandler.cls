@@ -1,5 +1,5 @@
-public without sharing class ul_RecordLockLogic {
-    private ul_RecordLockLogic() {}
+public without sharing class ul_LockRecordHandler {
+    private ul_LockRecordHandler() {}
 
 // ============
 //  ロック解除
@@ -50,15 +50,15 @@ public without sharing class ul_RecordLockLogic {
     *
     * レコードがロックされていた場合は更新後に再度ロックを掛ける
     */
-    public static void updateLockedRecord(SObject lockedRecord) {
+    public static void update(SObject obj) {
         SavePoint sp = Database.setSavePoint();
         try {
-            if (Approval.isLocked(lockedRecord)) {
-                Approval.unlock(lockedRecord);
-                update lockedRecord;
-                Approval.lock(lockedRecord);
+            if (Approval.isLocked(obj)) {
+                Approval.unlock(obj);
+                update obj;
+                Approval.lock(obj);
             } else {
-                update lockedRecord;
+                update obj;
             }
         } catch (Exception e) {
             Database.rollback(sp);
@@ -72,7 +72,7 @@ public without sharing class ul_RecordLockLogic {
     *
     * レコードがロックされていた場合は更新後に再度ロックを掛ける
     */
-    public static void updateLockedRecords(List<SObject> objList) {
+    public static void update(List<SObject> objList) {
         SavePoint sp = Database.setSavePoint();
         try {
             List<Id> lockedRecordIds = new List<Id>();
