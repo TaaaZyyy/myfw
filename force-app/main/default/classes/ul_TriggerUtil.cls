@@ -47,3 +47,4 @@ public with sharing class ul_TriggerUtil {
         }
         return objList;
     }
+}
