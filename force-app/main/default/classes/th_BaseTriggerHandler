@@ -1,0 +1,120 @@
+public virtual class th_BaseTriggerHandler {
+    protected String SOBJECT_NAME;
+    protected boolean isExecuting = false; // Apexコードの現在のコンテキストがトリガのみかどうか
+    protected integer batchSize   = 0;     // バッチサイズ
+
+    public th_BaseTriggerHandler(Boolean pIsExecuting, Integer pBatchSize) {
+        this.isExecuting = pIsExecuting;
+        this.batchSize   = pBatchSize;
+    }
+
+
+// ======================
+//  DMLハンドラメソッド
+// ======================
+    /** 登録前処理 */
+    public virtual void onBeforeInsert(List<SObject> newList) { System.debug(Logginglevel.INFO, '>>> ' + SOBJECT_NAME + '#onBeforeInsert'); }
+    /** 登録後処理 */
+    public virtual void onAfterInsert(List<SObject> newList, Map<Id, SObject> newMap) { System.debug(Logginglevel.INFO, '>>> ' + SOBJECT_NAME + '#onAfterInsert'); }
+    /** 更新前処理 */
+    public virtual void onBeforeUpdate(List<SObject> oldList, List<SObject> newList, Map<Id, SObject> oldMap, Map<Id, SObject> newMap) { System.debug(Logginglevel.INFO, '>>> ' + SOBJECT_NAME + '#onBeforeUpdate'); }
+    /** 更新後処理 */
+    public virtual void onAfterUpdate(List<SObject> oldList, List<SObject> newList, Map<Id, SObject> oldMap, Map<Id, SObject> newMap) { System.debug(Logginglevel.INFO, '>>> ' + SOBJECT_NAME + '#onAfterUpdate'); }
+    /** 削除前処理 */
+    public virtual void onBeforeDelete(List<SObject> oldList, Map<Id, SObject> oldMap) { System.debug(Logginglevel.INFO, '>>> ' + SOBJECT_NAME + '#onBeforeDelete'); }
+    /** 削除後処理 */
+    public virtual void onAfterDelete(List<SObject> oldList, Map<Id, SObject> oldMap) { System.debug(Logginglevel.INFO, '>>> ' + SOBJECT_NAME + '#onAfterDelete'); }
+    /** 復元後処理 */
+    public virtual void onUndelete(List<SObject> newList) { System.debug(Logginglevel.INFO, '>>> ' + SOBJECT_NAME + '#onUndelete'); }
+
+
+// ===================
+//  内部処理用メソッド
+// ===================
+    /** newObj と oldObj の項目fieldの変更有無 */
+    protected virtual Boolean isChanged(SObject oldObj, SObject newObj, Schema.SObjectField field) {
+        return newObj.get(field) != oldObj.get(field);
+    }
+
+
+    protected virtual Boolean isAnyChanged(SObject oldObj, SObject newObj, List<Schema.SObjectField> fields) {
+        for (Schema.SObjectField field : fields) {
+            if (isChanged(oldObj, newObj, field)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /** 【new】newMap のうち 項目fieldに変更があるオブジェクトのリストを返却する */
+    protected virtual List<SObject> selectChangedObjs(Map<Id, SObject> oldMap, Map<Id, SObject> newMap, Schema.SObjectField field) {
+        return selectChangedObjsAnyFields(oldMap, newMap, new List<Schema.SObjectField>{field}, true);
+    }
+
+
+    /** 【old】oldMap のうち 項目fieldに変更があるオブジェクトのリストを返却する */
+    protected virtual List<SObject> selectChangedOldObjs(Map<Id, SObject> oldMap, Map<Id, SObject> newMap, Schema.SObjectField field) {
+        return selectChangedObjsAnyFields(oldMap, newMap, new List<Schema.SObjectField>{field}, false);
+    }
+
+
+    /** 【new】newMap のうち 項目リストfieldsのいずれかの項目にに変更があるオブジェクトのリストを返却する */
+    protected virtual List<SObject> selectChangedObjsAnyFields(Map<Id, SObject> oldMap, Map<Id, SObject> newMap, List<Schema.SObjectField> fields) {
+        return selectChangedObjsAnyFields(oldMap, newMap, fields, true);
+    }
+
+
+    /** 【old】oldMap のうち 項目リストfieldsのいずれかの項目にに変更があるオブジェクトのリストを返却する */
+    protected virtual List<SObject> selectChangedOldObjsAnyFields(Map<Id, SObject> oldMap, Map<Id, SObject> newMap, List<Schema.SObjectField> fields) {
+        return selectChangedObjsAnyFields(oldMap, newMap, fields, false);
+    }
+
+
+    /** newMap のうち 項目tokenに変更があり、値がvalueのオブジェクトのリストを返却する */
+    protected virtual List<SObject> selectChangedObjs(Map<Id, SObject> oldMap, Map<Id, SObject> newMap, Schema.SObjectField field, Object value) {
+        List<SObject> tList = new List<SObject>();
+        for (Id objId : newMap.keySet()) {
+            if (newMap.get(objId).get(field) != value) { continue; }
+
+            if (isChanged(oldMap.get(objId), newMap.get(objId), field)) {
+                tList.add(newMap.get(objId));
+            }
+        }
+        return tList;
+    }
+
+
+    /** 項目値設定メソッド */
+    protected virtual List<SObject> putFieldValue(List<SObject> objList, Schema.SObjectField field, Object value) {
+        for (SObject obj : objList) {
+            obj.put(field, value);
+        }
+        return objList;
+    }
+
+
+
+// ===================
+//  内部メソッド
+// ===================
+    protected virtual List<SObject> selectChangedObjsAnyFields(Map<Id, SObject> oldMap, Map<Id, SObject> newMap, List<Schema.SObjectField> fields, Boolean isNew) {
+        List<SObject> tList = new List<SObject>();
+        for (Id objId : newMap.keySet()) {
+            SObject oldObj = oldMap.get(objId);
+            SObject newObj = newMap.get(objId);
+
+            for (SObjectField field : fields) {
+                if (isChanged(oldObj, newObj, field)) {
+                    if (isNew) {
+                        tList.add(newObj);
+                    } else {
+                        tList.add(oldObj);
+                    }
+                    break;
+                }
+            }
+        }
+        return tList;
+    }
+}
