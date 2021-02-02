@@ -1,0 +1,21 @@
+public without sharing class TH_AccountTriggerHandler extends TH_BaseTriggerHandler {
+    public TH_AccountTriggerHandler(Boolean pIsExecuting, Integer pBatchSize) {
+        super(pIsExecuting, pBatchSize);
+        SOBJECT_NAME = 'Account';
+    }
+
+
+    /** 更新前処理 */
+    public override void onBeforeUpdate(List<SObject> oldList, List<SObject> newList, Map<Id, SObject> oldMap, Map<Id, SObject> newMap) {
+        System.debug(Logginglevel.INFO, '>>> ' + SOBJECT_NAME + '#onBeforeUpdate');
+
+        doSomething((List<Account>) newList);
+    }
+
+
+// ==============
+//   内部処理
+// ==============
+    private void doSomething(List<Account> objList) {
+    }
+}
