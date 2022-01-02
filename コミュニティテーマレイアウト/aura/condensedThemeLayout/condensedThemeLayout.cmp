@@ -5,7 +5,8 @@
         <div class="slds-col">
             <div class="slds-grid slds-grid--vertical">
                 <div class="slds-col">
-                <!-- placeholder for logo -->
+                    <!-- logo -->
+                    <div class="logoContainer"></div>
                 </div>
                 <div class="slds-col">
                     {!v.search}

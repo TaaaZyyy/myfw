@@ -17,3 +17,15 @@
 
 変更後
 ![after](.pic/layout-after.png)
+
+## トークンバンドル
+[defaultTokens.tokens](aura/defaultTokens/defaultTokens.tokens)
+
+* トークンバンドルを定義して、ExperienceBuilderのテーマパネルで定義されたSLDSトークンとブランド値にアクセスします。
+* Lightningコンポーネントが、ロゴやフォントファミリなどを制御するブランドトークンにアクセスできるようにするには、同じ名前空間でトークンバンドルを定義します。
+* トークンバンドルは`forceCommunity：base`を拡張します。これにより、SLDSによって公開されるすべてのトークンと、ExperienceBuilderのテーマパネルで定義されたブランド値にアクセスできます。
+
+## CSSでトークンを使用する
+[condensedThemeLayout.css](aura/condensedThemeLayout/condensedThemeLayout.css)
+
+Experience Builderでは、テーマパネルの各プロパティは1つ以上の標準デザイントークンにマップされます。したがって、コンポーネントのCSSでトークンを使用することにより、管理者がテーマパネルを使用してコンポーネントの外観をすばやく簡単に更新できるようになります。
