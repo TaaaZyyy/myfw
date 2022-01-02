@@ -7,12 +7,10 @@
             var state = response.getState();
             if (state === 'SUCCESS') {
                 var ids = response.getReturnValue();
-                this[NavigationMixin.Navigate]({
-                    type: 'standard__component',
-                    attributes: {
-                        componentName: "c__component name"
-                    }
-                });sole.log(ids);
+                sessionStorage.setItem('customSearch--recordIds', JSON.stringify(ids));
+                var navEvt = $A.get('e.force:navigateToURL');
+                navEvt.setParams({url: '/custom-search-results'});
+                navEvt.fire();
             }
         });
         $A.enqueueAction(action);

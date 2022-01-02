@@ -43,6 +43,9 @@ Experience Builderでは、テーマパネルの各プロパティは1つ以上�
 [customSearch.cmp](aura/customSearch/customSearch.cmp)
 
 * このコードは`<lightning：ButtonIcon>`コンポーネントを使用し、クリックハンドラーを含みます。また、検索テキストを含む`searchText`という属性が含まれ、（`<input>`の代わりに）`<ui：inputText>`コンポーネントを使用して値をバインドします。
+* セッションストレージの値が設定され、新しいページへのナビゲーションイベントが発生します。
+
+![カスタム検索コンポーネント選択画面](.pic/custom-search-component.png)
 
 ## 単一のレコードを表示するコンポーネント
 [customSearchResultItem.cmp](aura/customSearchResultItem/customSearchResultItem.cmp)
