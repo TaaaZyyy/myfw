@@ -4,3 +4,4 @@ sfdx-project.json
 /work
 /mdapi
 /.vscode
+.pmdCache
