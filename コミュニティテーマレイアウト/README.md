@@ -29,3 +29,12 @@
 [condensedThemeLayout.css](aura/condensedThemeLayout/condensedThemeLayout.css)
 
 Experience Builderでは、テーマパネルの各プロパティは1つ以上の標準デザイントークンにマップされます。したがって、コンポーネントのCSSでトークンを使用することにより、管理者がテーマパネルを使用してコンポーネントの外観をすばやく簡単に更新できるようになります。
+
+## 垂直ナビゲーション
+[verticalNav.css](aura/verticalNav/verticalNav.css)
+
+* `forceCommunity：navigationMenuBase`コンポーネントを拡張すると、新しいコンポーネントは、サイトのナビゲーションメニューコンポーネントで定義されているすべてのナビゲーションメニュー項目に自動的にアクセスできるようになります。管理者は、ExperienceBuilderのナビゲーションメニューで項目を定義および更新できます。
+* 動作中のメニューを表示するために、この単純な順序なしリストは、拡張抽象コンポーネントで定義されているmenuItemsの配列を反復処理し、配列内の各エントリに対して<li>を出力します。
+このコードは、aura式の構文を利用して、気の利いたことを実行します。
+* アイテムがアクティブであるかどうかに応じて、`slds-is-active`クラスをリストアイテムに条件付きで追加できます。
+* また、`data-menu-item-id`をアイテムの一意のIDに設定します。これは、後で対応するアイテムに移動するために使用できます。
